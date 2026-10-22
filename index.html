@@ -8,7 +8,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="One Album">
-  <meta name="description" content="One question, one album, no skipping. A listening experiment.">
+  <meta name="description" content="One album at a time, played through. A listening experiment.">
   <title>One Album</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon-192.png">
@@ -16,31 +16,68 @@
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
-  <div id="demo-banner" class="banner" hidden>Demo mode · fake library, no sound, time runs 30× faster</div>
+  <div id="demo-banner" class="banner" hidden>Demo mode · fake library, no sound, time runs faster</div>
 
-  <!-- 1. Connect -->
+  <!-- Connect -->
   <section id="screen-connect" class="screen">
     <div class="center">
       <div class="disc" aria-hidden="true"></div>
       <h1 class="display">One Album</h1>
-      <p class="lede">One question. One album. Play it through.</p>
+      <p class="lede">One record off your shelf. Play it through.</p>
       <button id="btn-connect" class="btn primary">Connect Apple Music</button>
       <button id="btn-demo" class="btn ghost">Try the demo</button>
       <p id="connect-msg" class="small muted"></p>
     </div>
   </section>
 
-  <!-- 2. Mood -->
+  <!-- Day 0: choose the crate -->
+  <section id="screen-setup" class="screen" hidden>
+    <div class="stack">
+      <div class="row">
+        <button id="btn-setup-cancel" class="link">← Back</button>
+        <span id="setup-count" class="small muted"></span>
+      </div>
+      <h1 class="display">Choose your crate</h1>
+      <p class="muted">Pick 8 to 10 albums you'd happily put on. They're your shelf for this run, like owning a few records. They stay fixed until the run ends.</p>
+      <input id="setup-search" type="search" placeholder="Search your albums" autocomplete="off">
+      <ul id="setup-list" class="albums"></ul>
+      <div class="sticky-foot">
+        <p id="setup-msg" class="small muted"></p>
+        <button id="btn-autopick" class="btn ghost" hidden>Pick 10 for me (demo)</button>
+        <button id="btn-lock" class="btn primary" disabled>Lock in my crate</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Run rules -->
+  <section id="screen-rules" class="screen" hidden>
+    <div class="stack">
+      <p class="eyebrow">New run</p>
+      <h1 class="display">How this works</h1>
+      <ol class="rules">
+        <li>Each session gets one of three modes, at random: <b>Shuffle</b>, a <b>random album</b> from your library, or an album from <b>your crate</b> that you choose.</li>
+        <li>Skip works in every mode. Albums play in order.</li>
+        <li>Hold the button to end early. When it ends, nothing else starts. You pick the next one when you're ready.</li>
+        <li>No re-rolls. If you don't fancy what you got, end it early. That's useful data too.</li>
+        <li>Afterwards, one question: was that a good listen?</li>
+        <li>A day or so later, a quick memory check: what did you listen to?</li>
+      </ol>
+      <button id="btn-rules-start" class="btn primary">Start</button>
+    </div>
+  </section>
+
+  <!-- Mood (optional) -->
   <section id="screen-mood" class="screen" hidden>
     <div class="stack">
       <p class="eyebrow" id="mood-eyebrow">Session</p>
-      <h1 class="display">What's your mood?</h1>
+      <h1 class="display">How are you feeling?</h1>
+      <p class="small muted">Optional. It doesn't change what plays.</p>
       <div id="mood-chips" class="chips"></div>
       <label class="field">
         <span class="small muted">or in your own words</span>
         <input id="mood-text" type="text" maxlength="80" placeholder="e.g. tired, rainy, need to focus" autocomplete="off">
       </label>
-      <button id="btn-go" class="btn primary" disabled>Play</button>
+      <button id="btn-next" class="btn primary" disabled>Next</button>
       <p id="mood-msg" class="small muted"></p>
     </div>
     <nav class="footer-nav">
@@ -52,10 +89,30 @@
     </nav>
   </section>
 
-  <!-- 3. Playing -->
+  <!-- Mode reveal, then tap to play -->
+  <section id="screen-reveal" class="screen" hidden>
+    <div class="stack">
+      <p class="eyebrow" id="reveal-eyebrow"></p>
+      <h1 class="display" id="reveal-mode"></h1>
+      <p class="muted" id="reveal-desc"></p>
+      <div id="reveal-album" class="reveal-album" hidden>
+        <div id="reveal-art" class="art"></div>
+        <div>
+          <h2 id="reveal-title" class="title"></h2>
+          <p id="reveal-artist" class="muted"></p>
+        </div>
+      </div>
+      <div id="reveal-shelf" class="shelf" hidden></div>
+      <button id="btn-play" class="btn primary" disabled>Play</button>
+      <p id="reveal-msg" class="small muted center-text"></p>
+      <button id="btn-notnow" class="link">Not now (this mode waits for next time)</button>
+    </div>
+  </section>
+
+  <!-- Playing -->
   <section id="screen-playing" class="screen" hidden>
     <div class="stack playing">
-      <p class="eyebrow"><span id="play-mode"></span> · <span id="play-mood"></span></p>
+      <p class="eyebrow"><span id="play-mode"></span><span id="play-mood"></span></p>
       <div id="play-art" class="art"></div>
       <div>
         <h2 id="play-title" class="title"></h2>
@@ -68,18 +125,19 @@
       </div>
       <div class="controls">
         <button id="btn-pause" class="btn round" aria-label="Pause">❚❚</button>
-        <button id="btn-skip" class="btn round" aria-label="Skip" hidden>⏭</button>
+        <button id="btn-skip" class="btn round" aria-label="Skip">⏭</button>
       </div>
+      <p id="play-msg" class="small muted center-text"></p>
       <button id="btn-end" class="btn hold"><span class="fill"></span><span class="label">Hold to end early</span></button>
       <p id="play-why" class="small muted center-text"></p>
     </div>
   </section>
 
-  <!-- 4. Rate -->
+  <!-- Rate -->
   <section id="screen-rate" class="screen" hidden>
     <div class="stack">
       <p class="eyebrow" id="rate-eyebrow"></p>
-      <h1 class="display">Did it work?</h1>
+      <h1 class="display">Was that a good listen?</h1>
       <div class="choice-row">
         <button class="btn choice" data-rate="yes">Yes</button>
         <button class="btn choice" data-rate="sortof">Sort of</button>
@@ -92,37 +150,41 @@
     </div>
   </section>
 
-  <!-- 5. Recall -->
+  <!-- Recall -->
   <section id="screen-recall" class="screen" hidden>
     <div class="stack">
       <p class="eyebrow">Memory check</p>
       <h1 class="display" id="recall-q"></h1>
       <label class="field">
-        <span class="small muted">no peeking — type what you remember</span>
+        <span class="small muted">no peeking. Type what you remember.</span>
         <input id="recall-answer" type="text" maxlength="120" autocomplete="off">
       </label>
       <button id="btn-reveal" class="btn primary">Reveal</button>
-      <div id="recall-reveal" hidden>
-        <p class="muted small">It was</p>
-        <p id="recall-truth" class="title"></p>
+      <div id="recall-reveal" class="stack" hidden>
+        <div>
+          <p class="muted small">It was</p>
+          <p id="recall-truth" class="title"></p>
+        </div>
+        <p class="small muted">Did you name at least one correct artist or title?</p>
         <div class="choice-row">
-          <button class="btn choice" data-recall="1">Got it</button>
-          <button class="btn choice" data-recall="0.5">Partly</button>
-          <button class="btn choice" data-recall="0">No idea</button>
+          <button class="btn choice" data-recall="1">Yes</button>
+          <button class="btn choice" data-recall="0.5">Roughly</button>
+          <button class="btn choice" data-recall="0">Nothing</button>
         </div>
       </div>
       <button id="btn-recall-skip" class="link">Skip this one</button>
     </div>
   </section>
 
-  <!-- 6. Results -->
+  <!-- Results -->
   <section id="screen-stats" class="screen" hidden>
     <div class="stack">
       <div class="row">
         <button class="link" data-goto="mood">← Back</button>
         <div class="tabs" id="period-tabs">
-          <button data-period="7" class="on">7 days</button>
-          <button data-period="30">30 days</button>
+          <button data-period="run" class="on">Run</button>
+          <button data-period="7">7d</button>
+          <button data-period="30">30d</button>
           <button data-period="0">All</button>
         </div>
       </div>
@@ -130,11 +192,12 @@
       <div id="stats-headline" class="headline"></div>
       <div class="card">
         <table class="compare">
-          <thead><tr><th></th><th>One album</th><th>Shuffle</th></tr></thead>
+          <thead><tr><th></th><th>Shuffle</th><th>Random album</th><th>Your crate</th></tr></thead>
           <tbody id="stats-table"></tbody>
         </table>
+        <p class="small muted">Small grey numbers: how many sessions each figure is based on. Recall shows once every mode has 3 scored memory checks.</p>
       </div>
-      <h3 class="eyebrow">By mood</h3>
+      <h3 class="eyebrow">By mood · good listen</h3>
       <div id="stats-moods" class="card"></div>
       <button id="btn-share" class="btn primary">Make share image</button>
       <img id="share-preview" alt="Results share image" hidden>
@@ -143,32 +206,29 @@
     </div>
   </section>
 
-  <!-- 7. Settings -->
+  <!-- Settings -->
   <section id="screen-settings" class="screen" hidden>
     <div class="stack">
       <button class="link" data-goto="mood">← Back</button>
       <h1 class="display">Settings</h1>
 
       <div class="card">
-        <h3>Experiment</h3>
-        <p class="small muted">Which listening mode a session gets. Mood is always asked first, so it can't bias the mode.</p>
-        <label class="radio"><input type="radio" name="assign" value="random"> Random (balanced) — side-by-side test</label>
-        <label class="radio"><input type="radio" name="assign" value="album"> One album only</label>
-        <label class="radio"><input type="radio" name="assign" value="shuffle"> Shuffle only</label>
+        <h3>Mode assignment</h3>
+        <p class="small muted">Random is the experiment. The others force one mode for testing, and those sessions are left out of results.</p>
+        <label class="radio"><input type="radio" name="assign" value="random"> Random (the experiment)</label>
+        <label class="radio"><input type="radio" name="assign" value="shuffle"> Shuffle only (test)</label>
+        <label class="radio"><input type="radio" name="assign" value="album"> Random album only (test)</label>
+        <label class="radio"><input type="radio" name="assign" value="crate"> Your crate only (test)</label>
         <label class="field inline">
           <span class="small">Shuffle session length</span>
-          <input id="set-shuffle-len" type="number" min="5" max="40" step="1"> <span class="small muted">songs</span>
+          <input id="set-shuffle-min" type="number" min="20" max="90" step="5"> <span class="small muted">minutes</span>
         </label>
       </div>
 
       <div class="card">
-        <h3>Crate</h3>
-        <p class="small muted">Limit the pool to a handful of albums to test whether a small collection is enough. Empty = whole library.</p>
+        <h3>Crate and run</h3>
         <p id="crate-summary" class="small"></p>
-        <div class="row">
-          <button class="btn ghost" data-goto="crate">Choose albums</button>
-          <button id="btn-crate-clear" class="btn ghost">Clear</button>
-        </div>
+        <button id="btn-change-crate" class="btn ghost">Change crate (starts a new run)</button>
       </div>
 
       <div class="card">
@@ -179,11 +239,11 @@
 
       <div class="card">
         <h3>Your data</h3>
-        <p class="small muted">Everything stays on this device. Export a backup now and then — iOS can clear web app storage.</p>
+        <p class="small muted">Everything stays on this device. Export a backup now and then, because iOS can clear web app storage.</p>
         <div class="row wrap">
           <button id="btn-export" class="btn ghost">Export JSON</button>
           <label class="btn ghost">Import JSON<input id="file-import" type="file" accept="application/json" hidden></label>
-          <button id="btn-reset" class="btn ghost danger">Delete all data</button>
+          <button id="btn-reset" class="btn ghost danger">Delete all sessions</button>
         </div>
       </div>
 
@@ -197,19 +257,6 @@
         </div>
       </div>
       <p class="small muted center-text">One Album · open source · v<span id="app-version"></span></p>
-    </div>
-  </section>
-
-  <!-- 8. Crate picker -->
-  <section id="screen-crate" class="screen" hidden>
-    <div class="stack">
-      <div class="row">
-        <button class="link" data-goto="settings">← Done</button>
-        <span id="crate-count" class="small muted"></span>
-      </div>
-      <h1 class="display">Your crate</h1>
-      <input id="crate-search" type="search" placeholder="Search albums" autocomplete="off">
-      <ul id="crate-list" class="albums"></ul>
     </div>
   </section>
 

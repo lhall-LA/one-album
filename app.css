@@ -137,5 +137,27 @@ input:focus { border-color: var(--accent); }
 .albums .a { font-size: 12px; color: var(--muted); }
 .albums input { margin-left: auto; width: 20px; height: 20px; accent-color: var(--accent); }
 
+.albums label.off { opacity: 0.4; cursor: default; }
+
 .radio { display: flex; gap: 10px; align-items: center; font-size: 14px; padding: 4px 0; }
 .radio input { accent-color: var(--accent); }
+
+/* setup and rules */
+.sticky-foot { position: sticky; bottom: 0; background: var(--bg); padding: 12px 0 calc(8px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); }
+.rules { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; color: var(--ink); }
+.rules li::marker { color: var(--accent); font-family: var(--mono); }
+
+/* reveal */
+.reveal-album { display: flex; flex-direction: column; gap: 14px; }
+.reveal-album .art { width: 70%; align-self: center; }
+.shelf { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.shelf-item { background: none; border: 0; padding: 0; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.shelf-item .cover { aspect-ratio: 1; border-radius: 4px; background: var(--panel) center/cover no-repeat; border: 2px solid transparent; display: grid; place-items: center; font-family: var(--serif); font-size: 28px; color: var(--muted); }
+.shelf-item.on .cover { border-color: var(--accent); }
+.shelf-item .t { font-size: 12px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.shelf-item .a { font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* results */
+.trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+.compare .cnt { font-size: 10px; color: var(--muted); }
+.compare th { line-height: 1.2; }

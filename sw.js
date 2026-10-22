@@ -1,6 +1,6 @@
 // Caches the app shell so it opens instantly and offline.
 // Bump CACHE whenever you change a file, or phones keep the old version.
-const CACHE = "one-album-v0.1.0";
+const CACHE = "one-album-v0.2.0";
 const SHELL = ["./", "index.html", "app.css", "app.js", "config.js", "manifest.webmanifest",
   "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 

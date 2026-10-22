@@ -1,7 +1,7 @@
 {
   "name": "One Album",
   "short_name": "One Album",
-  "description": "One question, one album, no skipping. A listening experiment.",
+  "description": "One album at a time, played through. A listening experiment.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
