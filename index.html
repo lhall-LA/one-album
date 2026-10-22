@@ -3,16 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#141210">
+  <meta name="theme-color" content="#f5f5ef" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1b1d19" media="(prefers-color-scheme: dark)">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="One Album">
-  <meta name="description" content="One album at a time, played through. A listening experiment.">
+  <meta name="description" content="One album at a time, played through. A heytim.studio listening experiment.">
   <title>One Album</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon-192.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
@@ -22,7 +26,8 @@
   <section id="screen-connect" class="screen">
     <div class="center">
       <div class="disc" aria-hidden="true"></div>
-      <h1 class="display">One Album</h1>
+      <p class="eyebrow">A <a href="https://heytim.studio" target="_blank" rel="noopener">heytim.studio</a> experiment</p>
+      <h1 class="display">One Album<span class="dot">.</span></h1>
       <p class="lede">One record off your shelf. Play it through.</p>
       <button id="btn-connect" class="btn primary">Connect Apple Music</button>
       <button id="btn-demo" class="btn ghost">Try the demo</button>
@@ -53,7 +58,7 @@
   <section id="screen-rules" class="screen" hidden>
     <div class="stack">
       <p class="eyebrow">New run</p>
-      <h1 class="display">How this works</h1>
+      <h1 class="display">How this works<span class="dot">.</span></h1>
       <ol class="rules">
         <li>Each session gets one of three modes, at random: <b>Shuffle</b>, a <b>random album</b> from your library, or an album from <b>your crate</b> that you choose.</li>
         <li>Skip works in every mode. Albums play in order.</li>
@@ -256,7 +261,7 @@
           <button id="btn-signout" class="btn ghost">Sign out / exit demo</button>
         </div>
       </div>
-      <p class="small muted center-text">One Album · open source · v<span id="app-version"></span></p>
+      <p class="brand-credit center-text">One Album · a <a href="https://heytim.studio" target="_blank" rel="noopener">heytim.studio</a> experiment · open source · v<span id="app-version"></span></p>
     </div>
   </section>
 

@@ -1,5 +1,7 @@
 # One Album
 
+*A [heytim.studio](https://heytim.studio) experiment.*
+
 Pull one record off your own shelf and play it through. Skip works. When it ends, nothing else starts until you choose.
 
 It's also a small personal experiment. Each session is randomly given one of three modes, and the app tracks how each goes:

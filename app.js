@@ -4,7 +4,7 @@
 (() => {
 "use strict";
 
-const VERSION = "0.2.0";
+const VERSION = "0.3.0";
 const CFG = window.ONE_ALBUM_CONFIG || {};
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => Array.from(document.querySelectorAll(s));
@@ -64,7 +64,7 @@ function nextAssignment() {
 const MOODS = {
   happy:     { label: "Happy",     e: "☀" },
   sad:       { label: "Sad",       e: "☂" },
-  amped:     { label: "Amped",     e: "⚡" },
+  amped:     { label: "Amped",     e: "⚡︎" }, // text style, so it matches the other symbols
   calm:      { label: "Calm",      e: "☾" },
   focused:   { label: "Focused",   e: "◎" },
   nostalgic: { label: "Nostalgic", e: "↺" },
@@ -775,20 +775,25 @@ $("#btn-share").addEventListener("click", async () => {
   const st = computeStats(), { by, all } = st;
   const c = document.createElement("canvas"); c.width = 1080; c.height = 1350;
   const x = c.getContext("2d");
-  const serif = '"Iowan Old Style", Palatino, Georgia, serif', mono = "Menlo, Consolas, monospace", sans = "-apple-system, Segoe UI, sans-serif";
-  x.fillStyle = "#141210"; x.fillRect(0, 0, 1080, 1350);
-  x.fillStyle = "#e8643c"; x.beginPath(); x.arc(980, 120, 36, 0, Math.PI * 2); x.fill();
+  // heytim.studio palette and type; wait for the web fonts so the canvas doesn't fall back
+  const display = '"Space Grotesk", Arial, sans-serif', sans = '"DM Sans", Arial, sans-serif';
+  const PAPER = "#f5f5ef", INK = "#20221f", MUTED = "#62665d", LINE = "#cdcec7", BLUE = "#2945ed";
+  try { await Promise.all(["600 84px", "500 34px", "600 24px"].map((f, i) => document.fonts.load(`${f} ${i ? sans : display}`))); } catch {}
+  x.fillStyle = PAPER; x.fillRect(0, 0, 1080, 1350);
+  x.fillStyle = BLUE; x.beginPath(); x.arc(980, 120, 30, 0, Math.PI * 2); x.fill();
   const span = period === "run" ? `${st.spanDays} DAY${st.spanDays === 1 ? "" : "S"}` : period === "0" ? "ALL TIME" : `${period} DAYS`;
-  x.fillStyle = "#9a9083"; x.font = `26px ${mono}`;
+  x.fillStyle = MUTED; x.font = `600 24px ${sans}`;
   x.fillText(`${span} · ${all.n} SESSIONS · ONE PERSON`, 80, 130);
-  x.fillStyle = "#f1e9dc"; x.font = `500 84px ${serif}`;
-  x.fillText("Was that a", 80, 260);
-  x.fillText("good listen?", 80, 350);
+  x.fillStyle = INK; x.font = `600 92px ${display}`;
+  x.fillText("Was that a", 80, 270);
+  x.fillText("good listen", 80, 370);
+  const qx = 80 + x.measureText("good listen").width;
+  x.fillStyle = BLUE; x.fillText("?", qx, 370);
   MODES.forEach((m, i) => {
     const cx = 80 + i * 320;
-    x.fillStyle = "#9a9083"; x.font = `24px ${mono}`; x.fillText(MODE_LABEL[m].toUpperCase(), cx, 470);
-    x.fillStyle = "#f1e9dc"; x.font = `500 110px ${serif}`; x.fillText(pct(by[m].good), cx, 600);
-    x.fillStyle = "#9a9083"; x.font = `24px ${mono}`; x.fillText(`${by[m].goodN} rated`, cx, 645);
+    x.fillStyle = MUTED; x.font = `600 22px ${sans}`; x.fillText(MODE_LABEL[m].toUpperCase(), cx, 480);
+    x.fillStyle = INK; x.font = `600 110px ${display}`; x.fillText(pct(by[m].good), cx, 600);
+    x.fillStyle = MUTED; x.font = `500 24px ${sans}`; x.fillText(`${by[m].goodN} rated`, cx, 645);
   });
   const rows = [
     ["Skip runs / session", (s) => num(s.skipRuns)],
@@ -798,17 +803,21 @@ $("#btn-share").addEventListener("click", async () => {
   if (st.recallReady) rows.push(["Next-day recall", (s) => pct(s.recall)]);
   const colX = [640, 820, 1000];
   let y = 800;
-  x.font = `22px ${mono}`; x.fillStyle = "#9a9083"; x.textAlign = "right";
+  x.font = `600 20px ${sans}`; x.fillStyle = MUTED; x.textAlign = "right";
   MODES.forEach((m, i) => x.fillText(MODE_SHORT[m], colX[i], y - 50));
   for (const [l, f] of rows) {
-    x.strokeStyle = "#2e2a25"; x.lineWidth = 2; x.beginPath(); x.moveTo(80, y - 36); x.lineTo(1000, y - 36); x.stroke();
-    x.textAlign = "left"; x.fillStyle = "#f1e9dc"; x.font = `34px ${sans}`; x.fillText(l, 80, y + 10);
-    x.textAlign = "right"; x.font = `36px ${mono}`;
+    x.strokeStyle = LINE; x.lineWidth = 2; x.beginPath(); x.moveTo(80, y - 36); x.lineTo(1000, y - 36); x.stroke();
+    x.textAlign = "left"; x.fillStyle = INK; x.font = `400 34px ${sans}`; x.fillText(l, 80, y + 10);
+    x.textAlign = "right"; x.font = `600 36px ${display}`;
     MODES.forEach((m, i) => x.fillText(f(by[m]), colX[i], y + 10));
     y += 90;
   }
-  x.textAlign = "left"; x.fillStyle = "#9a9083"; x.font = `26px ${mono}`;
-  x.fillText(`Sessions: shuffle ${by.shuffle.n} · album ${by.album.n} · crate ${by.crate.n}`, 80, 1250);
+  x.textAlign = "left"; x.fillStyle = MUTED; x.font = `500 24px ${sans}`;
+  x.fillText(`Sessions: shuffle ${by.shuffle.n} · album ${by.album.n} · crate ${by.crate.n}`, 80, 1210);
+  x.fillStyle = INK; x.font = `600 26px ${display}`;
+  x.fillText("One Album", 80, 1270);
+  x.fillStyle = MUTED; x.font = `500 24px ${sans}`;
+  x.textAlign = "right"; x.fillText("a heytim.studio experiment", 1000, 1270); x.textAlign = "left";
   const blob = await new Promise((r) => c.toBlob(r, "image/png"));
   const img = $("#share-preview"); img.src = URL.createObjectURL(blob); img.hidden = false;
   await shareOrDownload(new File([blob], "one-album-results.png", { type: "image/png" }));

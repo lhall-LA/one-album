@@ -1,12 +1,12 @@
 {
   "name": "One Album",
   "short_name": "One Album",
-  "description": "One album at a time, played through. A listening experiment.",
+  "description": "One album at a time, played through. A heytim.studio listening experiment.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#141210",
-  "theme_color": "#141210",
+  "background_color": "#f5f5ef",
+  "theme_color": "#f5f5ef",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
